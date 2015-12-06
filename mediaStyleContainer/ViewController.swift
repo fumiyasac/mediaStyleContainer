@@ -48,8 +48,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var fifthContainer: UIView!
     @IBOutlet var sixthContainer: UIView!
     
-    //スクロールカウンター
-    //var scrollCounter: Int!
+    //ボタンスクロール時の移動量
+    var scrollButtonOffsetX: Int!
     
     override func viewDidLoad() {
         
@@ -111,16 +111,16 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         if segue.identifier == "fromChildController"{
             
             /**
-             *
              * ■ このサンプルのポイント
+             * 
+             * 子供のコントローラーで遷移を行うボタンに下記の記述を施す 
+             * (StoryBoardで任意のViewControllerにContainerを配置した場合、ContainerでEmbed Segueで繋がっているViewControllerは、配置されたViewControllerの子供のコントローラーとして認識される)
              * self.parentViewController?.performSegueWithIdentifier("fromChildController", sender: resultDictionary)
-             * (何をやっているの？)
-             * このメソッドで渡されたsenderの値を遷移先のControllerへ引き渡しをする
              *
+             * → このメソッドで渡されたsenderの値を遷移先のControllerへ引き渡しをする
              */
             
             let dataList: AnyObject = sender as! [String : String]
-            
             let resultController = segue.destinationViewController as! ResultController
             
             resultController.sendColor = dataList["color"] as! String
@@ -129,7 +129,16 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //スクロールが発生した際に行われる処理
-    //※ ボタンが押される or コンテナ表示部分をスクロールスクロールすると発生する
+    /**
+     * ■ このサンプルのポイント
+     *
+     * スクロールが発生した際に行われる処理
+     * スクロールビューにtagプロパティを設定しコンテンツのスクロールのみを検知するようにする
+     *
+     *  → 場合は下記2パターンになる
+     ※ Case1. ボタンが押される(ボタンエリアのスクロールでは作動しない)
+     * Case2. コンテナ表示部分を直にスクロールすると
+     */
     func scrollViewDidScroll(scrollview: UIScrollView) {
         
         //コンテンツのスクロールのみ検知
@@ -178,17 +187,30 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     //ボタンのスクロールビューをスライドさせる
     func moveFormNowButtonContentsScrollView(page: Int) {
 
+        //Case1. ボタンを内包しているスクロールビューの位置変更をする
         if page > 0 && page < (self.containerCount - 1) {
         
-            UIView.animateWithDuration(0.2, delay: 0, options: [], animations: {
+            self.scrollButtonOffsetX = Int(self.view.frame.size.width) / 3 * (page - 1)
+        
+        //Case2. 一番最初のpage番号のときの移動量
+        } else if page == 0 {
             
-                self.buttonScrollView.contentOffset = CGPointMake(
-                    CGFloat(Int(self.view.frame.size.width) / 3 * (page - 1)),
-                    CGFloat(0.0)
-                )
+            self.scrollButtonOffsetX = 0
+        
+        //Case3. 一番最後のpage番号のときの移動量
+        } else if page == (self.containerCount - 1) {
             
-            }, completion: nil)
+            self.scrollButtonOffsetX = Int(self.view.frame.size.width)
         }
+        
+        UIView.animateWithDuration(0.2, delay: 0, options: [], animations: {
+            
+            self.buttonScrollView.contentOffset = CGPointMake(
+                CGFloat(self.scrollButtonOffsetX),
+                CGFloat(0.0)
+            )
+            
+        }, completion: nil)
         
     }
     
