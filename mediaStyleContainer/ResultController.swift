@@ -21,6 +21,8 @@ class ResultController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = ColorDefinition.colorWithHexString("EEEEEE")
+        
         //Containerから受け取った情報を表示
         self.colorLabel.backgroundColor = ColorDefinition.colorWithHexString(self.sendColor)
         self.viewName.text = self.sendLabel
