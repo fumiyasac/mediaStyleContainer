@@ -245,7 +245,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         buttonElement.setTitle(ButtonTextDefinition.getButtonLabel(i), forState: .Normal)
         buttonElement.titleLabel!.font = UIFont(name: "Bold", size: CGFloat(16))
         buttonElement.tag = i
-        buttonElement.addTarget(self, action: "buttonTapped:", forControlEvents: .TouchUpInside)
+        buttonElement.addTarget(self, action: #selector(ViewController.buttonTapped(_:)), forControlEvents: .TouchUpInside)
     }
     
     //コンテナの初期配置を行う
