@@ -10,7 +10,7 @@
 enum ScrollViewDefinition: Int {
     
     //スクロールビューの名称
-    case ButtonArea, ContentsArea
+    case buttonArea, contentsArea
     
     //状態に対応する値を返す
     func returnValue() -> Int {

@@ -22,7 +22,7 @@ struct ButtonTextDefinition {
     }
     
     //インデックスに対応するテキストを返す
-    static func getButtonLabel(key: Int) -> String {
+    static func getButtonLabel(_ key: Int) -> String {
         
         let target: Array = self.getButtonTextList()
         return target[key]

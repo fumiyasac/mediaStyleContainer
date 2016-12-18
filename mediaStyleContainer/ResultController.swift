@@ -28,8 +28,8 @@ class ResultController: UIViewController {
         self.viewName.text = self.sendLabel
     }
     
-    @IBAction func backParentAction(sender: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func backParentAction(_ sender: UIButton) {
+        self.dismiss(animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {

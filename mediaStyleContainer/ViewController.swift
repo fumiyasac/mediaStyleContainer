@@ -56,57 +56,57 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
 
         //初期値の計算を行う
-        self.calcContentsScrollViewSize()
+        calcContentsScrollViewSize()
         
         //ボタン表示用ScrollViewの位置決定
-        self.buttonScrollView.frame = CGRectMake(
-            CGFloat(0),
-            CGFloat(self.buttonScrollViewPosY),
-            CGFloat(DeviceSize.screenWidth()),
-            CGFloat(self.buttonScrollViewHeight)
+        buttonScrollView.frame = CGRect(
+            x: CGFloat(0),
+            y: CGFloat(self.buttonScrollViewPosY),
+            width: CGFloat(DeviceSize.screenWidth()),
+            height: CGFloat(self.buttonScrollViewHeight)
         )
         
         //コンテンツ表示用ScrollViewの位置決定
-        self.contentsScrollView.frame = CGRectMake(
-            CGFloat(0),
-            CGFloat(self.contentsScrollViewPosY),
-            CGFloat(DeviceSize.screenWidth()),
-            CGFloat(self.contentsScrollViewHeight)
+        contentsScrollView.frame = CGRect(
+            x: CGFloat(0),
+            y: CGFloat(self.contentsScrollViewPosY),
+            width: CGFloat(DeviceSize.screenWidth()),
+            height: CGFloat(self.contentsScrollViewHeight)
         )
         
         //スクロールビューデリゲート
-        self.buttonScrollView.delegate = self
-        self.contentsScrollView.delegate = self
+        buttonScrollView.delegate = self
+        contentsScrollView.delegate = self
         
         //スクロールビューの定義
-        self.initButtonScrollViewSettings()
+        initButtonScrollViewSettings()
         self.initContentsScrollViewSettings()
         
         //コンテナの初期位置
-        self.containerPosition = ContainerDefinition.FirstContainer
+        containerPosition = ContainerDefinition.firstContainer
         
         //各ScrollViewに要素を等間隔に配置
-        for i in 0...(self.containerCount - 1){
+        for i in 0...(containerCount - 1){
             
             self.addButtonToButtonScrollView(i)
             self.addContainerViewToContentsScrollView(i)
         }
         
         //動くラベルの配置
-        self.slidingLabel = UILabel()
-        self.buttonScrollView.addSubview(self.slidingLabel)
-        self.slidingLabel.frame = CGRectMake(
-            CGFloat(0),
-            CGFloat(self.slidingLabelPosY),
-            CGFloat(DeviceSize.screenWidth() / 3),
-            CGFloat(self.slidingLabelHeight)
+        slidingLabel = UILabel()
+        buttonScrollView.addSubview(self.slidingLabel)
+        slidingLabel.frame = CGRect(
+            x: CGFloat(0),
+            y: CGFloat(self.slidingLabelPosY),
+            width: CGFloat(DeviceSize.screenWidth() / 3),
+            height: CGFloat(self.slidingLabelHeight)
         )
-        self.slidingLabel.backgroundColor = UIColor.darkGrayColor()
+        slidingLabel.backgroundColor = UIColor.darkGray
         
     }
     
     //segueを呼び出したときに呼ばれるメソッド
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     
         if segue.identifier == "fromChildController"{
             
@@ -120,8 +120,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
              * → このメソッドで渡されたsenderの値を遷移先のControllerへ引き渡しをする
              */
             
-            let dataList: AnyObject = sender as! [String : String]
-            let resultController = segue.destinationViewController as! ResultController
+            let dataList: AnyObject = sender as! [String : String] as AnyObject
+            let resultController = segue.destination as! ResultController
             
             resultController.sendColor = dataList["color"] as! String
             resultController.sendLabel = dataList["name"] as! String
@@ -139,10 +139,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
      ※ Case1. ボタンが押される(ボタンエリアのスクロールでは作動しない)
      * Case2. コンテナ表示部分を直にスクロールすると
      */
-    func scrollViewDidScroll(scrollview: UIScrollView) {
+    func scrollViewDidScroll(_ scrollview: UIScrollView) {
         
         //コンテンツのスクロールのみ検知
-        if scrollview.tag == ScrollViewDefinition.ContentsArea.returnValue() {
+        if scrollview.tag == ScrollViewDefinition.contentsArea.returnValue() {
         
             //現在表示されているページ番号を判別する
             let pageWidth: CGFloat = self.contentsScrollView.frame.size.width
@@ -150,17 +150,17 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             let page: NSInteger = lround(fractionalPage)
             
             //動くラベルをスライドさせる
-            self.moveFormUnderlabel(page)
+            moveFormUnderlabel(page)
             
             //ボタン配置用のスクロールビューもスライドさせる
-            self.moveFormNowButtonContentsScrollView(page)
+            moveFormNowButtonContentsScrollView(page)
             
         }
         
     }
 
     //ボタンをタップした際に行われる処理
-    func buttonTapped(button: UIButton){
+    func buttonTapped(_ button: UIButton){
         
         //押されたボタンのタグを取得
         let page: Int = button.tag
@@ -171,13 +171,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //ボタン押下でコンテナをスライドさせる
-    func moveFormNowDisplayContentsScrollView(page: Int) {
+    func moveFormNowDisplayContentsScrollView(_ page: Int) {
         
-        UIView.animateWithDuration(0.2, delay: 0, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
             
-            self.contentsScrollView.contentOffset = CGPointMake(
-                CGFloat(Int(self.view.frame.size.width) * page),
-                CGFloat(0.0)
+            self.contentsScrollView.contentOffset = CGPoint(
+                x: CGFloat(Int(self.view.frame.size.width) * page),
+                y: CGFloat(0.0)
             )
             
         }, completion: nil)
@@ -185,29 +185,29 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //ボタンのスクロールビューをスライドさせる
-    func moveFormNowButtonContentsScrollView(page: Int) {
+    func moveFormNowButtonContentsScrollView(_ page: Int) {
 
         //Case1. ボタンを内包しているスクロールビューの位置変更をする
         if page > 0 && page < (self.containerCount - 1) {
         
-            self.scrollButtonOffsetX = Int(self.view.frame.size.width) / 3 * (page - 1)
+            scrollButtonOffsetX = Int(self.view.frame.size.width) / 3 * (page - 1)
         
         //Case2. 一番最初のpage番号のときの移動量
         } else if page == 0 {
             
-            self.scrollButtonOffsetX = 0
+            scrollButtonOffsetX = 0
         
         //Case3. 一番最後のpage番号のときの移動量
         } else if page == (self.containerCount - 1) {
             
-            self.scrollButtonOffsetX = Int(self.view.frame.size.width)
+            scrollButtonOffsetX = Int(self.view.frame.size.width)
         }
         
-        UIView.animateWithDuration(0.2, delay: 0, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
             
-            self.buttonScrollView.contentOffset = CGPointMake(
-                CGFloat(self.scrollButtonOffsetX),
-                CGFloat(0.0)
+            self.buttonScrollView.contentOffset = CGPoint(
+                x: CGFloat(self.scrollButtonOffsetX),
+                y: CGFloat(0.0)
             )
             
         }, completion: nil)
@@ -215,41 +215,41 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //動くラベルをスライドさせる
-    func moveFormUnderlabel(page: Int) {
+    func moveFormUnderlabel(_ page: Int) {
         
-        UIView.animateWithDuration(0.2, delay: 0, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
             
-            self.slidingLabel.frame = CGRectMake(
-                CGFloat(DeviceSize.screenWidth() / 3 * page),
-                CGFloat(self.slidingLabelPosY),
-                CGFloat(DeviceSize.screenWidth() / 3),
-                CGFloat(self.slidingLabelHeight)
+            self.slidingLabel.frame = CGRect(
+                x: CGFloat(DeviceSize.screenWidth() / 3 * page),
+                y: CGFloat(self.slidingLabelPosY),
+                width: CGFloat(DeviceSize.screenWidth() / 3),
+                height: CGFloat(self.slidingLabelHeight)
             )
             
         }, completion: nil)
     }
     
     //ボタンの初期配置を行う
-    func addButtonToButtonScrollView(i: Int) {
+    func addButtonToButtonScrollView(_ i: Int) {
         
         let buttonElement: UIButton! = UIButton()
-        self.buttonScrollView.addSubview(buttonElement)
+        buttonScrollView.addSubview(buttonElement)
         
         let pX: CGFloat = CGFloat(DeviceSize.screenWidth() / 3 * i)
         let pY: CGFloat = CGFloat(0)
         let pW: CGFloat = CGFloat(DeviceSize.screenWidth() / 3)
         let pH: CGFloat = CGFloat(self.buttonScrollViewHeight)
         
-        buttonElement.frame = CGRectMake(pX, pY, pW, pH)
-        buttonElement.backgroundColor = UIColor.clearColor()
-        buttonElement.setTitle(ButtonTextDefinition.getButtonLabel(i), forState: .Normal)
+        buttonElement.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
+        buttonElement.backgroundColor = UIColor.clear
+        buttonElement.setTitle(ButtonTextDefinition.getButtonLabel(i), for: UIControlState())
         buttonElement.titleLabel!.font = UIFont(name: "Bold", size: CGFloat(16))
         buttonElement.tag = i
-        buttonElement.addTarget(self, action: #selector(ViewController.buttonTapped(_:)), forControlEvents: .TouchUpInside)
+        buttonElement.addTarget(self, action: #selector(ViewController.buttonTapped(_:)), for: .touchUpInside)
     }
     
     //コンテナの初期配置を行う
-    func addContainerViewToContentsScrollView(i: Int) {
+    func addContainerViewToContentsScrollView(_ i: Int) {
         
         let pX: CGFloat = CGFloat(DeviceSize.screenWidth() * i)
         let pY: CGFloat = CGFloat(0)
@@ -257,35 +257,35 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let pH: CGFloat = CGFloat(self.contentsScrollViewHeight)
         
         //Containerの配置をする
-        if i == ContainerDefinition.FirstContainer.returnValue() {
+        if i == ContainerDefinition.firstContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.firstContainer)
-            self.firstContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.firstContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
             
-        } else if i == ContainerDefinition.SecondContainer.returnValue() {
+        } else if i == ContainerDefinition.secondContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.secondContainer)
-            self.secondContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.secondContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
             
-        } else if i == ContainerDefinition.ThirdContainer.returnValue() {
+        } else if i == ContainerDefinition.thirdContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.thirdContainer)
-            self.thirdContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.thirdContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
             
-        } else if i == ContainerDefinition.FourthContainer.returnValue() {
+        } else if i == ContainerDefinition.fourthContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.fourthContainer)
-            self.fourthContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.fourthContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
             
-        } else if i == ContainerDefinition.FifthContainer.returnValue() {
+        } else if i == ContainerDefinition.fifthContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.fifthContainer)
-            self.fifthContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.fifthContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
             
-        } else if i == ContainerDefinition.SixthContainer.returnValue() {
+        } else if i == ContainerDefinition.sixthContainer.returnValue() {
             
             self.contentsScrollView.addSubview(self.sixthContainer)
-            self.sixthContainer.frame = CGRectMake(pX, pY, pW, pH)
+            self.sixthContainer.frame = CGRect(x: pX, y: pY, width: pW, height: pH)
 
         }
     }
@@ -293,40 +293,40 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     //ボタン配置用Scrollviewの初期セッティング
     func initButtonScrollViewSettings() {
         
-        self.buttonScrollView.tag = ScrollViewDefinition.ButtonArea.returnValue()
-        self.buttonScrollView.pagingEnabled = false
-        self.buttonScrollView.scrollEnabled = true
-        self.buttonScrollView.directionalLockEnabled = false
-        self.buttonScrollView.showsHorizontalScrollIndicator = false
-        self.buttonScrollView.showsVerticalScrollIndicator = false
-        self.buttonScrollView.bounces = false
-        self.buttonScrollView.scrollsToTop = false
+        buttonScrollView.tag = ScrollViewDefinition.buttonArea.returnValue()
+        buttonScrollView.isPagingEnabled = false
+        buttonScrollView.isScrollEnabled = true
+        buttonScrollView.isDirectionalLockEnabled = false
+        buttonScrollView.showsHorizontalScrollIndicator = false
+        buttonScrollView.showsVerticalScrollIndicator = false
+        buttonScrollView.bounces = false
+        buttonScrollView.scrollsToTop = false
         
         //コンテンツサイズの決定
-        self.buttonScrollView.contentSize = CGSizeMake(
-            CGFloat(DeviceSize.screenWidth() * self.containerCount / 3),
-            CGFloat(self.buttonScrollViewHeight)
+        buttonScrollView.contentSize = CGSize(
+            width: CGFloat(DeviceSize.screenWidth() * containerCount / 3),
+            height: CGFloat(buttonScrollViewHeight)
         )
     }
 
     //コンテンツ配置用Scrollviewの初期セッティング
     func initContentsScrollViewSettings() {
         
-        self.contentsScrollView.tag = ScrollViewDefinition.ContentsArea.returnValue()
-        self.contentsScrollView.pagingEnabled = true
-        self.contentsScrollView.scrollEnabled = true
-        self.contentsScrollView.directionalLockEnabled = false
-        self.contentsScrollView.showsHorizontalScrollIndicator = true
-        self.contentsScrollView.showsVerticalScrollIndicator = false
-        self.contentsScrollView.bounces = false
-        self.contentsScrollView.scrollsToTop = false
+        contentsScrollView.tag = ScrollViewDefinition.contentsArea.returnValue()
+        contentsScrollView.isPagingEnabled = true
+        contentsScrollView.isScrollEnabled = true
+        contentsScrollView.isDirectionalLockEnabled = false
+        contentsScrollView.showsHorizontalScrollIndicator = true
+        contentsScrollView.showsVerticalScrollIndicator = false
+        contentsScrollView.bounces = false
+        contentsScrollView.scrollsToTop = false
         
         //コンテンツサイズの決定
-        self.calcContentsScrollViewSize()
-        self.contentsScrollView.backgroundColor = UIColor.lightGrayColor()
-        self.contentsScrollView.contentSize = CGSizeMake(
-            CGFloat(DeviceSize.screenWidth() * self.containerCount),
-            CGFloat(self.contentsScrollViewHeight)
+        calcContentsScrollViewSize()
+        contentsScrollView.backgroundColor = UIColor.lightGray
+        contentsScrollView.contentSize = CGSize(
+            width: CGFloat(DeviceSize.screenWidth() * containerCount),
+            height: CGFloat(contentsScrollViewHeight)
         )
     }
     
@@ -334,8 +334,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     func calcContentsScrollViewSize() {
         
         //buttonScrollViewのY座標＆高さを元に位置計算を行っている
-        self.contentsScrollViewPosY = (self.buttonScrollViewPosY + self.buttonScrollViewHeight)
-        self.contentsScrollViewHeight = (DeviceSize.screenHeight() - self.contentsScrollViewPosY)
+        contentsScrollViewPosY = (buttonScrollViewPosY + buttonScrollViewHeight)
+        contentsScrollViewHeight = (DeviceSize.screenHeight() - contentsScrollViewPosY)
     }
 
     override func didReceiveMemoryWarning() {

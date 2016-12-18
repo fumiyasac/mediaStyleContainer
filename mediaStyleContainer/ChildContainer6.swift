@@ -14,14 +14,14 @@ class ChildContainer6: UIViewController {
         super.viewDidLoad()
     }
 
-    @IBAction func sendParent6(sender: UIButton) {
+    @IBAction func sendParent6(_ sender: UIButton) {
 
         let resultDictionary: [String : String] = [
             "id" : "6",
             "color" : "FF99CC",
             "name" : ButtonTextDefinition.getButtonLabel(5)
         ]
-        self.parentViewController?.performSegueWithIdentifier("fromChildController", sender: resultDictionary)
+        self.parent?.performSegue(withIdentifier: "fromChildController", sender: resultDictionary)
         
     }
     

@@ -7,7 +7,7 @@
 //
 
 enum ContainerDefinition: Int {
-    case FirstContainer, SecondContainer, ThirdContainer, FourthContainer, FifthContainer ,SixthContainer
+    case firstContainer, secondContainer, thirdContainer, fourthContainer, fifthContainer ,sixthContainer
     
     //状態に対応する値を返す
     func returnValue() -> Int {
